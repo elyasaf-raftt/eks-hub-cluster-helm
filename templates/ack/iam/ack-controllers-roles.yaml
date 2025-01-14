@@ -1,0 +1,34 @@
+{{- if eq ($.Values.ackSubChart).enabled true -}}
+
+{{- $controllers := deepCopy ($.Values.ackSubChart | default dict) -}}
+{{/* remove the 'enabled' element from dict */}}
+{{- $_ := unset  $controllers "enabled" -}}
+
+{{- $namespace := include "eks-hub-cluster.ackNamespace" $ -}}
+{{- $environment := include "eks-hub-cluster.environment" $ }}
+{{- range $name, $args := $controllers -}}
+{{- if eq $args.enabled true -}}
+
+{{/*
+  assume using default service account of the ack controller sub chart
+*/}}
+{{- $serviceSccountName := printf "ack-%s-controller" $name -}}
+{{- $jsonRole := include "eks-hub-cluster.ackControllers.roleJson" (dict "ctx" $ "serviceSccountList" ( list $serviceSccountName) ) -}} 
+{{- $rolaName := printf "ack-%s-controller-%s" $name $environment }}
+---
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Role
+metadata:
+  name: {{ $rolaName }}
+  namespace: {{ include "eks-hub-cluster.ackNamespace" $ }}
+  labels: {{ include "eks-hub-cluster.labels" $ | nindent 4 }}
+spec:
+  name: {{ $rolaName }}
+  description: |
+      This policy is assigned to the EKS cluster ("Cluster IAM role").
+      This was copied from the AWS Console wizard for creating a new role for EKS in auto mode.
+  assumeRolePolicyDocument: {{ $jsonRole | toJson | nindent 4 -}}
+  {{ include "eks-hub-cluster.ackControllers.policies(ctx, name)" (dict "ctx" $ "name" $name) | nindent 2 }}
+{{- end }}
+{{- end -}}
+{{- end -}}

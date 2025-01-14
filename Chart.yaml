@@ -1,0 +1,19 @@
+name: eks-hub-cluster
+version: 0.1.0
+description: |
+  Deploys resources to hub cluster using ACK (AWS Controllers for Kubernetes).
+  This is "hub" cluster to deploy multi EKS cluster.
+
+  We also support registring EKS cluster in ArgoCD
+
+dependencies:
+- name: ack-chart
+  alias: ackSubChart
+  version: 46.18.14
+  repository: oci://public.ecr.aws/aws-controllers-k8s
+  condition: ackSubChart.enabled
+- name: argo-cd
+  alias: argocdSubChart
+  version: 7.7.12
+  repository: https://argoproj.github.io/argo-helm
+  condition: argocdSubChart.enabled

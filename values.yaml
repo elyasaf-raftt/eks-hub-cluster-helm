@@ -1,0 +1,139 @@
+cluster:
+  environment: dev-elyasaf # optional default hub
+  name:
+aws:
+  accountID: 449049208064
+  region:
+  oidcProvider: oidc-provider/oidc.eks.eu-central-1.amazonaws.com/id/449AE98B9BA4555C54134442D8547BD2
+
+ack:
+  namespace: ack-system
+  controllersPolicyActionMap:
+    eks: [ eks:*, ec2:*, sts:AssumeRole,iam:*,kms:* ]
+    ec2: [ ec2:* ]
+    iam: [ iam:* ]
+
+  # Added extras policies to controllers role.
+  # added the policyArn ex. arn:aws:iam::aws:policy/<policy_name>
+  attachExistingPolicies:
+    eks: []
+    ec2: []
+    iam: []
+
+argocdSubChart:
+  enabled: false
+
+ackSubChart:
+  enabled: false
+  iam:
+    enabled: true
+    serviceAccount:
+      create: true
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::449049208064:role/dev-elyasaf-ack-iam-controller
+  eks:
+    enabled: true
+    serviceAccount:
+      create: true
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::449049208064:role/dev-elyasaf-ack-eks-controller
+  ec2:
+    enabled: true
+    serviceAccount:
+      create: true
+      annotations:
+        eks.amazonaws.com/role-arn: 'arn:aws:iam::449049208064:role/dev-elyasaf-ack-ec2-controller'
+  acm:
+    enabled: false
+  acmpca:
+    enabled: false
+  apigateway:
+    enabled: false
+  apigatewayv2:
+    enabled: false
+  applicationautoscaling:
+    enabled: false
+  athena:
+    enabled: false
+  cloudfront:
+    enabled: false
+  cloudtrail:
+    enabled: false
+  cloudwatch:
+    enabled: false
+  cloudwatchlogs:
+    enabled: false
+  codeartifact:
+    enabled: false
+  cognitoidentityprovider:
+    enabled: false
+  documentdb:
+    enabled: false
+  dynamodb:
+    enabled: false
+  ecr:
+    enabled: false
+  ecrpublic:
+    enabled: false
+  ecs:
+    enabled: false
+  efs:
+    enabled: false
+  elbv2:
+    enabled: false
+  emrcontainers:
+    enabled: false
+  eventbridge:
+    enabled: false
+  kafka:
+    enabled: false
+  keyspaces:
+    enabled: false
+  kinesis:
+    enabled: false
+  kms:
+    enabled: false
+  lambda:
+    enabled: false
+  memorydb:
+    enabled: false
+  mq:
+    enabled: false
+  networkfirewall:
+    enabled: false
+  opensearchservice:
+    enabled: false
+  organizations:
+    enabled: false
+  pipes:
+    enabled: false
+  prometheusservice:
+    enabled: false
+  ram:
+    enabled: false
+  rds:
+    enabled: false
+  recyclebin:
+    enabled: false
+  route53resolver:
+    enabled: false
+  s3:
+    enabled: false
+  s3control:
+    enabled: false
+  sagemaker:
+    enabled: false
+  secretsmanager:
+    enabled: false
+  ses:
+    enabled: false
+  sfn:
+    enabled: false
+  sns:
+    enabled: false
+  sqs:
+    enabled: false
+  ssm:
+    enabled: false
+  wafv2:
+    enabled: false

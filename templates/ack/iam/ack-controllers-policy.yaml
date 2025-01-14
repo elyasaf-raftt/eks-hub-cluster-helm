@@ -1,0 +1,27 @@
+
+
+{{- if eq ($.Values.ackSubChart).enabled true -}}
+
+{{- $controllers := deepCopy ($.Values.ackSubChart | default dict) -}}
+{{/* remove the 'enabled' element from dict */}}
+{{- $_ := unset  $controllers "enabled" -}}
+
+{{- $namespace := include "eks-hub-cluster.ackNamespace" $ -}}
+{{- $environment := include "eks-hub-cluster.environment" $ -}}
+{{- range $name, $args := $controllers -}}
+{{- if eq $args.enabled true -}}
+
+{{- $policyName := printf "ack-%s-controller-%s" $name $environment }}
+---
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Policy
+metadata:
+  name: {{ $policyName }}
+  namespace: {{ include "eks-hub-cluster.ackNamespace" $ }}
+  labels: {{ include "eks-hub-cluster.labels" $ | nindent 4 }}
+spec:
+  name: {{ $policyName }}
+  policyDocument: {{ include "eks-hub-cluster.ackControllers.policyJson(ctx, name)" (dict "ctx" $ "name" $name ) | toJson | nindent 4 }}
+{{- end -}}
+{{- end -}}
+{{- end }}
